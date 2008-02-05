@@ -191,7 +191,6 @@ rm -rf %{buildroot}
 %files gui
 ###################################################
 %defattr(-,root,root)
-%{python_sitearch}/openipmigui
 %{_bindir}/openipmigui
 
 ###################################################

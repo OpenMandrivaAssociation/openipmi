@@ -185,7 +185,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{python_sitearch}/*OpenIPMI.*
 %doc swig/OpenIPMI.i
-%exclude %{python_sitearch}/openipmigui
+#%exclude %{python_sitearch}/openipmigui
 
 ###################################################
 %files gui

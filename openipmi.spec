@@ -110,7 +110,6 @@ This package contains a network IPMI listener.
 ###################################################
 %build
 ###################################################
-# Disabling the gui
 %configure2_5x	--with-wxpython=yes \
 		--with-perlinstall=%{perl_vendorarch} \
 		--with-pythoninstall=%{python_sitearch} \
@@ -121,7 +120,7 @@ This package contains a network IPMI listener.
 %install
 ###################################################
 rm -rf %{buildroot}
-%makeinstall_std
+%makeinstall_std PYTHON_GUI_DIR=openipmigui
 install -m755 ipmi.init -D %{buildroot}/%{_sysconfdir}/init.d/ipmi
 install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 

@@ -1,7 +1,7 @@
 %define realname OpenIPMI
 %define name    openipmi
 %define version 2.0.13
-%define release %mkrel 1
+%define release %mkrel 2
 
 #The lib naming in OpenIPMI 1.x
 %define oldlibname %mklibname %realname 1
@@ -26,11 +26,12 @@ Conflicts:	OpenIPMI
 Requires(pre):	rpm-helper
 Requires(post): rpm-helper
 Buildroot:      %{_tmppath}/%{name}-%{version}
-# This rpm will replace OpenIPMI and OpenIPMI2
+# This rpm will replace OpenIPMI and OpenIPMI2 and IPMI
 Obsoletes:	%{realname}
 Obsoletes:	%{realname}2
 Obsoletes:	%{oldlibname}
-
+Obsoletes: 	IPMI
+Provides:	IPMI
 
 # Perl is usually installed in /usr/lib, not /usr/lib64 on 64-bit platforms.
 #%define perl_libdir %{_exec_prefix}/lib

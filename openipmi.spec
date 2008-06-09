@@ -144,8 +144,7 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 
 %post lanserv -p /sbin/ldconfig
 
-%postun lanserv
-/sbin/ldconfig
+%postun lanserv -p /sbin/ldconfig
 
 %clean
 rm -rf %{buildroot}

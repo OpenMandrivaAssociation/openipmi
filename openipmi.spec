@@ -133,18 +133,30 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 ###################################################
 %postun
 ###################################################
+%if %mdkversion < 200900
 /sbin/ldconfig
+%endif
 %_post_service ipmi
 
+%if %mdkversion < 200900
 %post -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post ui -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun ui -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post lanserv -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun lanserv -p /sbin/ldconfig
+%endif
 
 %clean
 rm -rf %{buildroot}

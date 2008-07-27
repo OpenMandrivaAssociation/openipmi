@@ -1,19 +1,16 @@
 %define realname OpenIPMI
-%define name    openipmi
-%define version 2.0.13
-%define release %mkrel 2
 
 #The lib naming in OpenIPMI 1.x
 %define oldlibname %mklibname %realname 1
 
-Name: 		%{name}
+Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
-Version: 	%{version}
-Release: 	%{release}
-License: 	LGPL
-URL: 		http://openipmi.sourceforge.net
+Version:	2.0.14
+Release:	%mkrel 1
+License: 	LGPLv2+
 Group: 		System/Kernel and hardware
-Source: 	%realname-%{version}.tar.bz2
+URL: 		http://openipmi.sourceforge.net
+Source: 	http://downloads.sourceforge.net/openipmi/%{realname}-%{version}.tar.bz2
 BuildRequires:	swig >= 1.3
 BuildRequires:	python-devel
 BuildRequires:	popt-devel
@@ -22,58 +19,68 @@ BuildRequires:	net-snmp-devel
 BuildRequires:	libgdbm-devel
 BuildRequires:	perl-devel
 BuildRequires:	glib2-devel
+BuildRequires:	tcl-devel
 Conflicts:	OpenIPMI
 Requires(pre):	rpm-helper
-Requires(post): rpm-helper
-Buildroot:      %{_tmppath}/%{name}-%{version}
+Requires(post):	rpm-helper
 # This rpm will replace OpenIPMI and OpenIPMI2 and IPMI
 Obsoletes:	%{realname}
 Obsoletes:	%{realname}2
 Obsoletes:	%{oldlibname}
 Obsoletes: 	IPMI
 Provides:	IPMI
+Buildroot:	%{_tmppath}/%{name}-%{version}-buildroot
 
 # Perl is usually installed in /usr/lib, not /usr/lib64 on 64-bit platforms.
-#%define perl_libdir %{_exec_prefix}/lib
+#define perl_libdir %{_exec_prefix}/lib
 
 %description 
 This package contains a shared library implementation of IPMI and the
 basic tools used with OpenIPMI.
 
-%package	devel
+%package devel
 Summary:	Development files for OpenIPMI
 Group:		Development/C
-Requires:	%{name} = %{version} pkgconfig
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{realname}-devel
 Obsoletes:	%{realname}2-devel
 Obsoletes:	%{oldlibname}-devel
 
-
-%description	devel
+%description devel
 Contains additional files need for a developer to create applications
 and/or middleware that depends on libOpenIPMI
 
-%package -n	perl-%{name}
+%package -n perl-%{name}
 Summary:	Perl interface for OpenIPMI
 Group:		Development/Perl
-Requires:	%{name} = %{version}
-Obsoletes:  %{name}-perl
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{name}-perl
 Obsoletes:	perl-%{realname}2
 
 %description -n perl-%{name}
 A Perl interface for OpenIPMI.
 
-%package -n	python-%{name}
+%package -n python-%{name}
 Summary:	Python interface for OpenIPMI
 Group:		Development/Python
-Requires:	%{name} = %{version}
-Obsoletes:  	%{name}-python
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{name}-python
 Obsoletes:	python-%{realname}2
 
 %description -n python-%{name}
 A Python interface for OpenIPMI.
 
-%package	gui
+%package -n tcl-%{name}
+Summary:	TCL interface for OpenIPMI
+Group:		Development/Other
+Requires:	%{name} = %{version}-%{release}
+BuildRequires:	tcl-devel
+Requires:	tcl
+
+%description -n tcl-%{name}
+A TCL interface for OpenIPMI.
+
+%package gui
 Summary:	GUI (in python) for OpenIPMI
 Group:		System/Kernel and hardware
 Requires:	python-%{name} = %{version}-%{release}
@@ -82,57 +89,52 @@ Requires:	wxPythonGTK
 BuildRequires:	wxPythonGTK
 Obsoletes:	%{realname}2-gui
 
-%description	gui
+%description gui
 A GUI interface for OpenIPMI.  Written in python an requiring wxWidgets.
 
-%package	ui
+%package ui
 Summary:	User Interface (ui)
 Group:		System/Kernel and hardware
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{realname}2-ui
 
-%description	ui
+%description ui
 This package contains a user interface
 
-%package	lanserv
+%package lanserv
 Summary:	Emulates an IPMI network listener
 Group:		System/Kernel and hardware
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{realname}2-lanserv
 
-%description	lanserv
+%description lanserv
 This package contains a network IPMI listener.
 
-###################################################
 %prep
-###################################################
-%setup -q -n %realname-%{version}
+%setup -q -n %{realname}-%{version}
 
-###################################################
 %build
-###################################################
-%configure2_5x	--with-wxpython=yes \
-		--with-perlinstall=%{perl_vendorarch} \
-		--with-pythoninstall=%{python_sitearch} \
-		--with-glib12=no
+%define _disable_ld_no_undefined 1
+ 
+%configure2_5x	\
+	--with-perlinstall=%{perl_vendorarch} \
+	--with-pythoninstall=%{python_sitearch} \
+	--with-glib12=no \
+	--with-pythonusepthreads=yes \
+	--with-perlusepthreads=yes
+
 %make
 
-###################################################
 %install
-###################################################
 rm -rf %{buildroot}
 %makeinstall_std PYTHON_GUI_DIR=openipmigui
 install -m755 ipmi.init -D %{buildroot}/%{_sysconfdir}/init.d/ipmi
 install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 
-###################################################
 %preun
-###################################################
 %_preun_service ipmi
 
-###################################################
 %postun
-###################################################
 %if %mdkversion < 200900
 /sbin/ldconfig
 %endif
@@ -140,6 +142,14 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 
 %if %mdkversion < 200900
 %post -p /sbin/ldconfig
+%endif
+
+%if %mdkversion < 200900
+%post -n tcl-%{name} -p /sbin/ldconfig
+%endif
+
+%if %mdkversion < 200900
+%postun -n tcl-%{name} -p /sbin/ldconfig
 %endif
 
 %if %mdkversion < 200900
@@ -161,9 +171,7 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 %clean
 rm -rf %{buildroot}
 
-###################################################
 %files
-###################################################
 %defattr(-,root,root)
 %{_libdir}/libOpenIPMIcmdlang.so.*
 %{_libdir}/libOpenIPMIcmdlang.la
@@ -179,35 +187,30 @@ rm -rf %{buildroot}
 %{_libdir}/libOpenIPMIutils.la
 %{_sysconfdir}/init.d/ipmi
 %config(noreplace) %{_sysconfdir}/sysconfig/ipmi
-%doc COPYING COPYING.LIB FAQ INSTALL README README.Force
+%doc FAQ README README.Force
 %doc README.MotorolaMXP
 
-
-###################################################
 %files -n perl-%{name}
-###################################################
 %defattr(-,root,root)
 %{perl_vendorarch}/OpenIPMI.pm
 %{perl_vendorarch}/auto/OpenIPMI
 %doc swig/OpenIPMI.i swig/perl/sample swig/perl/ipmi_powerctl
 
-###################################################
 %files -n python-%{name}
-###################################################
 %defattr(-,root,root)
 %{python_sitearch}/*OpenIPMI.*
 %doc swig/OpenIPMI.i
-#%exclude %{python_sitearch}/openipmigui
 
-###################################################
+%files -n tcl-%{name}
+%defattr(-,root,root)
+%{_libdir}/*OpenIPMItcl.so.*
+%{_libdir}/*OpenIPMItcl.la
+
 %files gui
-###################################################
 %defattr(-,root,root)
 %{_bindir}/openipmigui
 
-###################################################
 %files devel
-###################################################
 %defattr(-,root,root)
 %{_includedir}/OpenIPMI
 %{_libdir}/*.a
@@ -215,9 +218,7 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig
 %doc doc/IPMI.pdf
 
-###################################################
 %files ui
-###################################################
 %defattr(-,root,root)
 %{_bindir}/ipmi_ui
 %{_bindir}/ipmicmd
@@ -237,9 +238,7 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man7/ipmi_cmdlang.7*
 %doc %{_mandir}/man7/openipmi_conparms.7*
 
-###################################################
 %files lanserv
-###################################################
 %defattr(-,root,root)
 %{_bindir}/ipmilan
 %{_libdir}/libIPMIlanserv.so.*

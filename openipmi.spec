@@ -6,7 +6,7 @@
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.14
-Release:	%mkrel 1
+Release:	%mkrel 2 
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
@@ -208,10 +208,11 @@ rm -rf %{buildroot}
 
 %files gui
 %defattr(-,root,root)
+%{python_sitearch}/openipmigui/*
 %{_bindir}/openipmigui
 
 %files devel
-%defattr(-,root,root)
+%defattr(-,root,root)ii/i
 %{_includedir}/OpenIPMI
 %{_libdir}/*.a
 %{_libdir}/*.so

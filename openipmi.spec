@@ -1,3 +1,5 @@
+%define _disable_ld_no_undefined 1
+
 %define realname OpenIPMI
 
 #The lib naming in OpenIPMI 1.x
@@ -6,7 +8,7 @@
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.14
-Release:	%mkrel 2 
+Release:	%mkrel 3
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
@@ -19,7 +21,9 @@ BuildRequires:	net-snmp-devel
 BuildRequires:	libgdbm-devel
 BuildRequires:	perl-devel
 BuildRequires:	glib2-devel
-BuildRequires:	tcl-devel
+BuildRequires:	tcl tcl-devel
+BuildRequires:	tkinter
+BuildRequires:	tk tk-devel
 Conflicts:	OpenIPMI
 Requires(pre):	rpm-helper
 Requires(post):	rpm-helper
@@ -29,7 +33,7 @@ Obsoletes:	%{realname}2
 Obsoletes:	%{oldlibname}
 Obsoletes: 	IPMI
 Provides:	IPMI
-Buildroot:	%{_tmppath}/%{name}-%{version}-buildroot
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 # Perl is usually installed in /usr/lib, not /usr/lib64 on 64-bit platforms.
 #define perl_libdir %{_exec_prefix}/lib
@@ -114,7 +118,6 @@ This package contains a network IPMI listener.
 %setup -q -n %{realname}-%{version}
 
 %build
-%define _disable_ld_no_undefined 1
  
 %configure2_5x	\
 	--with-perlinstall=%{perl_vendorarch} \

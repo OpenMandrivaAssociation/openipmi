@@ -126,7 +126,7 @@ This package contains a network IPMI listener.
 	--with-pythonusepthreads=yes \
 	--with-perlusepthreads=yes
 
-%make
+make
 
 %install
 rm -rf %{buildroot}
@@ -215,7 +215,7 @@ rm -rf %{buildroot}
 %{_bindir}/openipmigui
 
 %files devel
-%defattr(-,root,root)ii/i
+%defattr(-,root,root)
 %{_includedir}/OpenIPMI
 %{_libdir}/*.a
 %{_libdir}/*.so

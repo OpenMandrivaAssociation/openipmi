@@ -7,12 +7,16 @@
 
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
-Version:	2.0.14
-Release:	%mkrel 7
+Version:	2.0.16
+Release:	%mkrel 1
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
-Source: 	http://downloads.sourceforge.net/openipmi/%{realname}-%{version}.tar.bz2
+Source: 	http://downloads.sourceforge.net/openipmi/%{realname}-%{version}.tar.gz
+Patch0:		OpenIPMI-2.0.16-link.diff
+Patch1:		OpenIPMI-2.0.16-python.diff
+Patch2:		OpenIPMI-2.0.16-libtool.patch
+Patch3:		OpenIPMI-2.0.16-python26.patch
 BuildRequires:	swig >= 1.3
 BuildRequires:	python-devel
 BuildRequires:	popt-devel
@@ -115,10 +119,15 @@ Obsoletes:	%{realname}2-lanserv
 This package contains a network IPMI listener.
 
 %prep
+
 %setup -q -n %{realname}-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
- 
+autoreconf -fi
 %configure2_5x	\
 	--with-perlinstall=%{perl_vendorarch} \
 	--with-pythoninstall=%{python_sitearch} \
@@ -130,7 +139,9 @@ make
 
 %install
 rm -rf %{buildroot}
+
 %makeinstall_std PYTHON_GUI_DIR=openipmigui
+
 install -m755 ipmi.init -D %{buildroot}/%{_sysconfdir}/init.d/ipmi
 install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 

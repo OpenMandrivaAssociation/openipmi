@@ -128,6 +128,7 @@ This package contains a network IPMI listener.
 
 %build
 autoreconf -fi
+export PYTHONDONTWRITEBYTECODE=
 %configure2_5x	\
 	--with-perlinstall=%{perl_vendorarch} \
 	--with-pythoninstall=%{python_sitearch} \

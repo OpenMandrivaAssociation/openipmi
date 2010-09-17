@@ -8,7 +8,7 @@
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.16
-Release:	%mkrel 5
+Release:	%mkrel 6
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
@@ -51,6 +51,8 @@ Summary:	Development files for OpenIPMI
 Group:		Development/C
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lanserv = %{version}-%{release}
+Requires:	%{name}-ui = %{version}-%{release}
+Requires:	tcl-%{name} = %{version}-%{release}
 Obsoletes:	%{realname}-devel
 Obsoletes:	%{realname}2-devel
 Obsoletes:	%{oldlibname}-devel

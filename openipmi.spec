@@ -1,5 +1,3 @@
-%define _disable_ld_no_undefined 1
-
 %define realname OpenIPMI
 
 #The lib naming in OpenIPMI 1.x
@@ -7,8 +5,8 @@
 
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
-Version:	2.0.16
-Release:	%mkrel 8
+Version:	2.0.18
+Release:	%mkrel 1
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
@@ -17,6 +15,7 @@ Patch0:		OpenIPMI-2.0.16-link.diff
 Patch1:		OpenIPMI-2.0.16-python.diff
 Patch2:		OpenIPMI-2.0.16-libtool.patch
 Patch3:		OpenIPMI-2.0.16-python26.patch
+Patch4:		openipmi-2.0.16-pthreads.patch
 BuildRequires:	swig >= 1.3
 BuildRequires:	python-devel
 BuildRequires:	popt-devel
@@ -122,16 +121,13 @@ Obsoletes:	%{realname}2-lanserv
 This package contains a network IPMI listener.
 
 %prep
-
 %setup -q -n %{realname}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
-autoreconf -fi
 export PYTHONDONTWRITEBYTECODE=
+%define _disable_ld_no_undefined 1
 %configure2_5x	\
 	--with-perlinstall=%{perl_vendorarch} \
 	--with-pythoninstall=%{python_sitearch} \

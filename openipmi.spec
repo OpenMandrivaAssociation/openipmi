@@ -6,7 +6,7 @@
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.18
-Release:	%mkrel 2
+Release:	3
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net
@@ -36,7 +36,6 @@ Obsoletes:	%{realname}2
 Obsoletes:	%{oldlibname}
 Obsoletes: 	IPMI
 Provides:	IPMI
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 # Perl is usually installed in /usr/lib, not /usr/lib64 on 64-bit platforms.
 #define perl_libdir %{_exec_prefix}/lib
@@ -133,14 +132,15 @@ export PYTHONDONTWRITEBYTECODE=
 	--with-pythoninstall=%{python_sitearch} \
 	--with-glib12=no \
 	--with-pythonusepthreads=yes \
-	--with-perlusepthreads=yes
+	--with-perlusepthreads=yes \
+	--disable-static
 
-make
+%make
 
 %install
-rm -rf %{buildroot}
-
 %makeinstall_std PYTHON_GUI_DIR=openipmigui
+
+find %{buildroot} -type f -name "*.la" -exec rm -f {} ';'
 
 install -m755 ipmi.init -D %{buildroot}/%{_sysconfdir}/init.d/ipmi
 install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
@@ -149,92 +149,43 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 %_preun_service ipmi
 
 %postun
-%if %mdkversion < 200900
-/sbin/ldconfig
-%endif
 %_post_service ipmi
 
-%if %mdkversion < 200900
-%post -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post -n tcl-%{name} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n tcl-%{name} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post ui -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun ui -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post lanserv -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun lanserv -p /sbin/ldconfig
-%endif
-
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %{_libdir}/libOpenIPMIcmdlang.so.*
-%{_libdir}/libOpenIPMIcmdlang.la
 %{_libdir}/libOpenIPMIglib.so.*
-%{_libdir}/libOpenIPMIglib.la
 %{_libdir}/libOpenIPMIposix.so.*
-%{_libdir}/libOpenIPMIposix.la
 %{_libdir}/libOpenIPMIpthread.so.*
-%{_libdir}/libOpenIPMIpthread.la
 %{_libdir}/libOpenIPMI.so.*
-%{_libdir}/libOpenIPMI.la
 %{_libdir}/libOpenIPMIutils.so.*
-%{_libdir}/libOpenIPMIutils.la
 %{_sysconfdir}/init.d/ipmi
 %config(noreplace) %{_sysconfdir}/sysconfig/ipmi
 %doc FAQ README README.Force
 %doc README.MotorolaMXP
 
 %files -n perl-%{name}
-%defattr(-,root,root)
 %{perl_vendorarch}/OpenIPMI.pm
 %{perl_vendorarch}/auto/OpenIPMI
 %doc swig/OpenIPMI.i swig/perl/sample swig/perl/ipmi_powerctl
 
 %files -n python-%{name}
-%defattr(-,root,root)
 %{python_sitearch}/*OpenIPMI.*
 %doc swig/OpenIPMI.i
 
 %files -n tcl-%{name}
-%defattr(-,root,root)
 %{_libdir}/*OpenIPMItcl.so.*
-%{_libdir}/*OpenIPMItcl.la
 
 %files gui
-%defattr(-,root,root)
 %{python_sitearch}/openipmigui/*
 %{_bindir}/openipmigui
 
 %files devel
-%defattr(-,root,root)
 %{_includedir}/OpenIPMI
-%{_libdir}/*.a
 %{_libdir}/*.so
 %{_libdir}/pkgconfig
 %doc doc/IPMI.pdf
 
 %files ui
-%defattr(-,root,root)
 %{_bindir}/ipmi_ui
 %{_bindir}/ipmicmd
 %{_bindir}/openipmicmd
@@ -243,7 +194,6 @@ rm -rf %{buildroot}
 %{_bindir}/solterm
 %{_bindir}/rmcp_ping
 %{_libdir}/libOpenIPMIui.so.*
-%{_libdir}/libOpenIPMIui.la
 %doc %{_mandir}/man1/ipmi_ui.1*
 %doc %{_mandir}/man1/openipmicmd.1*
 %doc %{_mandir}/man1/openipmish.1*
@@ -254,8 +204,6 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man7/openipmi_conparms.7*
 
 %files lanserv
-%defattr(-,root,root)
 %{_bindir}/ipmilan
 %{_libdir}/libIPMIlanserv.so.*
-%{_libdir}/libIPMIlanserv.la
 %doc %{_mandir}/man8/ipmilan.8*

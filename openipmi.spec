@@ -6,7 +6,7 @@
 Name: 		openipmi
 Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.18
-Release:	3
+Release:	4
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 URL: 		http://openipmi.sourceforge.net

@@ -1,0 +1,23 @@
+diff -ru OpenIPMI-2.0.16/swig/python/openipmigui/gui_list.py OpenIPMI-2.0.16,new/swig/python/openipmigui/gui_list.py
+--- OpenIPMI-2.0.16/swig/python/openipmigui/gui_list.py	2007-10-16 20:06:52.000000000 +0200
++++ OpenIPMI-2.0.16,new/swig/python/openipmigui/gui_list.py	2010-03-30 21:50:09.000000000 +0200
+@@ -32,7 +32,6 @@
+ 
+ import Tix
+ import gui_errstr
+-import gui
+ 
+ # A list widget that can be embedded in something else
+ class SubList(Tix.ScrolledHList):
+Only in OpenIPMI-2.0.16,new/swig/python/openipmigui: gui_list.py~
+diff -ru OpenIPMI-2.0.16/swig/python/openipmigui/gui_treelist.py OpenIPMI-2.0.16,new/swig/python/openipmigui/gui_treelist.py
+--- OpenIPMI-2.0.16/swig/python/openipmigui/gui_treelist.py	2006-11-14 16:33:37.000000000 +0100
++++ OpenIPMI-2.0.16,new/swig/python/openipmigui/gui_treelist.py	2010-03-30 21:50:13.000000000 +0200
+@@ -32,7 +32,6 @@
+ 
+ import Tix
+ import gui_errstr
+-import gui
+ 
+ class TreeList(Tix.Toplevel):
+     def __init__(self, name, root, columns):

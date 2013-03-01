@@ -1,70 +1,52 @@
-%define realname OpenIPMI
+%define rname	OpenIPMI
+%define major	0
+%define maj1	1
+%define	libposix	%mklibname %{rname}posix %{major}
+%define	libglib		%mklibname %{rname}glib %{major}
+%define	libcmdlang	%mklibname %{rname}cmdlang %{major}
+%define	libpthread	%mklibname %{rname}pthread %{major}
+%define	libname		%mklibname %{rname} %{major}
+%define	libutils	%mklibname %{rname}utils %{major}
+%define	libui		%mklibname %{rname}ui %{maj1}
+%define	liblanserv	%mklibname %{rname}lanserv %{major}
+%define	libtcl		%mklibname %{rname}tcl %{major}
+%define	devname		%mklibname %{rname} -d
 
-#The lib naming in OpenIPMI 1.x
-%define oldlibname %mklibname %realname 1
-
+Summary: 	Library interface to IPMI
 Name: 		openipmi
-Summary: 	%{name} - Library interface to IPMI
 Version:	2.0.18
 Release:	4
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
-URL: 		http://openipmi.sourceforge.net
-Source: 	http://downloads.sourceforge.net/openipmi/%{realname}-%{version}.tar.gz
-Patch0:		OpenIPMI-2.0.16-link.diff
-Patch1:		OpenIPMI-2.0.16-python.diff
-Patch2:		OpenIPMI-2.0.16-libtool.patch
+Url: 		http://openipmi.sourceforge.net
+Source0: 	http://downloads.sourceforge.net/openipmi/%{rname}-%{version}.tar.gz
 Patch3:		OpenIPMI-2.0.16-python26.patch
 Patch4:		openipmi-2.0.16-pthreads.patch
-BuildRequires:	swig >= 1.3
-BuildRequires:	python-devel
-BuildRequires:	popt-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	net-snmp-devel
-BuildRequires:	libgdbm-devel
-BuildRequires:	perl-devel
-BuildRequires:	glib2-devel
-BuildRequires:	tcl tcl-devel
-BuildRequires:	tkinter
-BuildRequires:	tk tk-devel
-Conflicts:	OpenIPMI
-Requires(pre):	rpm-helper
-Requires(post):	rpm-helper
-# This rpm will replace OpenIPMI and OpenIPMI2 and IPMI
-Obsoletes:	%{realname}
-Obsoletes:	%{realname}2
-Obsoletes:	%{oldlibname}
-Obsoletes: 	IPMI
-Provides:	IPMI
 
-# Perl is usually installed in /usr/lib, not /usr/lib64 on 64-bit platforms.
-#define perl_libdir %{_exec_prefix}/lib
+BuildRequires:	swig >= 1.3
+BuildRequires:	tcl
+BuildRequires:	tk
+BuildRequires:	tkinter
+BuildRequires:	gdbm-devel
+BuildRequires:	net-snmp-devel
+BuildRequires:	perl-devel
+BuildRequires:	wxPythonGTK
+BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(popt)
+BuildRequires:	pkgconfig(python)
+BuildRequires:	pkgconfig(tcl)
+BuildRequires:	pkgconfig(tk)
+Requires(pre,post):	rpm-helper
 
 %description 
 This package contains a shared library implementation of IPMI and the
 basic tools used with OpenIPMI.
 
-%package devel
-Summary:	Development files for OpenIPMI
-Group:		Development/C
-Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-lanserv = %{version}-%{release}
-Requires:	%{name}-ui = %{version}-%{release}
-Requires:	tcl-%{name} = %{version}-%{release}
-Obsoletes:	%{realname}-devel
-Obsoletes:	%{realname}2-devel
-Obsoletes:	%{oldlibname}-devel
-
-%description devel
-Contains additional files need for a developer to create applications
-and/or middleware that depends on libOpenIPMI
-
 %package -n perl-%{name}
 Summary:	Perl interface for OpenIPMI
 Group:		Development/Perl
 Requires:	%{name} = %{version}-%{release}
-Obsoletes:	%{name}-perl
-Obsoletes:	perl-%{realname}2
 
 %description -n perl-%{name}
 A Perl interface for OpenIPMI.
@@ -73,21 +55,9 @@ A Perl interface for OpenIPMI.
 Summary:	Python interface for OpenIPMI
 Group:		Development/Python
 Requires:	%{name} = %{version}-%{release}
-Obsoletes:	%{name}-python
-Obsoletes:	python-%{realname}2
 
 %description -n python-%{name}
 A Python interface for OpenIPMI.
-
-%package -n tcl-%{name}
-Summary:	TCL interface for OpenIPMI
-Group:		Development/Other
-Requires:	%{name} = %{version}-%{release}
-BuildRequires:	tcl-devel
-Requires:	tcl
-
-%description -n tcl-%{name}
-A TCL interface for OpenIPMI.
 
 %package gui
 Summary:	GUI (in python) for OpenIPMI
@@ -95,8 +65,6 @@ Group:		System/Kernel and hardware
 Requires:	python-%{name} = %{version}-%{release}
 Requires:	wxPython >= 2.4.2
 Requires:	wxPythonGTK
-BuildRequires:	wxPythonGTK
-Obsoletes:	%{realname}2-gui
 
 %description gui
 A GUI interface for OpenIPMI.  Written in python an requiring wxWidgets.
@@ -105,7 +73,6 @@ A GUI interface for OpenIPMI.  Written in python an requiring wxWidgets.
 Summary:	User Interface (ui)
 Group:		System/Kernel and hardware
 Requires:	%{name} = %{version}-%{release}
-Obsoletes:	%{realname}2-ui
 
 %description ui
 This package contains a user interface
@@ -114,15 +81,105 @@ This package contains a user interface
 Summary:	Emulates an IPMI network listener
 Group:		System/Kernel and hardware
 Requires:	%{name} = %{version}-%{release}
-Obsoletes:	%{realname}2-lanserv
 
 %description lanserv
 This package contains a network IPMI listener.
 
+%package -n %{libcmdlang}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libcmdlang}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libglib}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libglib}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libposix}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libposix}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libpthread}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libpthread}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libname}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libname}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libutils}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libutils}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libui}
+Summary:	A library for %{name}
+Group:		System/Libraries
+
+%description -n %{libui}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{liblanserv}
+Summary:	A library for %{name}
+Group:		System/Libraries
+Conflicts:	%{name}-lanserv < 2.0.18-5
+
+%description -n %{liblanserv}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{libtcl}
+Summary:	A library for %{name}
+Group:		System/Libraries
+Obsoletes:	tcl-%{name} < 2.0.18-5
+
+%description -n %{libtcl}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{devname}
+Summary:	Development files for OpenIPMI
+Group:		Development/C
+Requires:	%{libposix} = %{version}-%{release}
+Requires:	%{libglib} = %{version}-%{release}
+Requires:	%{libcmdlang} = %{version}-%{release}
+Requires:	%{libpthread} = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libutils} = %{version}-%{release}
+Requires:	%{libui} = %{version}-%{release}
+Requires:	%{liblanserv} = %{version}-%{release}
+Requires:	%{libtcl} = %{version}-%{release}
+%rename		%{name}-devel < 2.0.18-5
+
+%description -n %{devname}
+Contains additional files need for a developer to create applications
+and/or middleware that depends on libOpenIPMI
+
 %prep
-%setup -q -n %{realname}-%{version}
-%patch3 -p1
-%patch4 -p1
+%setup -qn %{rname}-%{version}
+%apply_patches
 
 %build
 export PYTHONDONTWRITEBYTECODE=
@@ -152,38 +209,10 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 %_post_service ipmi
 
 %files
-%{_libdir}/libOpenIPMIcmdlang.so.*
-%{_libdir}/libOpenIPMIglib.so.*
-%{_libdir}/libOpenIPMIposix.so.*
-%{_libdir}/libOpenIPMIpthread.so.*
-%{_libdir}/libOpenIPMI.so.*
-%{_libdir}/libOpenIPMIutils.so.*
-%{_sysconfdir}/init.d/ipmi
-%config(noreplace) %{_sysconfdir}/sysconfig/ipmi
 %doc FAQ README README.Force
 %doc README.MotorolaMXP
-
-%files -n perl-%{name}
-%{perl_vendorarch}/OpenIPMI.pm
-%{perl_vendorarch}/auto/OpenIPMI
-%doc swig/OpenIPMI.i swig/perl/sample swig/perl/ipmi_powerctl
-
-%files -n python-%{name}
-%{python_sitearch}/*OpenIPMI.*
-%doc swig/OpenIPMI.i
-
-%files -n tcl-%{name}
-%{_libdir}/*OpenIPMItcl.so.*
-
-%files gui
-%{python_sitearch}/openipmigui/*
-%{_bindir}/openipmigui
-
-%files devel
-%{_includedir}/OpenIPMI
-%{_libdir}/*.so
-%{_libdir}/pkgconfig
-%doc doc/IPMI.pdf
+%{_sysconfdir}/init.d/ipmi
+%config(noreplace) %{_sysconfdir}/sysconfig/ipmi
 
 %files ui
 %{_bindir}/ipmi_ui
@@ -193,7 +222,6 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 %{_bindir}/openipmish
 %{_bindir}/solterm
 %{_bindir}/rmcp_ping
-%{_libdir}/libOpenIPMIui.so.*
 %doc %{_mandir}/man1/ipmi_ui.1*
 %doc %{_mandir}/man1/openipmicmd.1*
 %doc %{_mandir}/man1/openipmish.1*
@@ -205,5 +233,50 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 
 %files lanserv
 %{_bindir}/ipmilan
-%{_libdir}/libIPMIlanserv.so.*
 %doc %{_mandir}/man8/ipmilan.8*
+%files -n %{libcmdlang}
+%{_libdir}/libOpenIPMIcmdlang.so.%{major}*
+
+%files -n perl-%{name}
+%{perl_vendorarch}/OpenIPMI.pm
+%{perl_vendorarch}/auto/OpenIPMI
+%doc swig/OpenIPMI.i swig/perl/sample swig/perl/ipmi_powerctl
+
+%files -n python-%{name}
+%{python_sitearch}/*OpenIPMI.*
+%doc swig/OpenIPMI.i
+
+%files gui
+%{python_sitearch}/openipmigui/*
+%{_bindir}/openipmigui
+
+%files -n %{libglib}
+%{_libdir}/libOpenIPMIglib.so.%{major}*
+
+%files -n %{libposix}
+%{_libdir}/libOpenIPMIposix.so.%{major}*
+
+%files -n %{libpthread}
+%{_libdir}/libOpenIPMIpthread.so.%{major}*
+
+%files -n %{libname}
+%{_libdir}/libOpenIPMI.so.%{major}*
+
+%files -n %{libutils}
+%{_libdir}/libOpenIPMIutils.so.%{major}*
+
+%files -n %{libui}
+%{_libdir}/libOpenIPMIui.so.%{maj1}*
+
+%files -n %{liblanserv}
+%{_libdir}/libIPMIlanserv.so.%{major}*
+
+%files -n %{libtcl}
+%{_libdir}/libOpenIPMItcl.so.%{major}*
+
+%files -n %{devname}
+%{_includedir}/OpenIPMI
+%{_libdir}/*.so
+%{_libdir}/pkgconfig
+%doc doc/IPMI.pdf
+

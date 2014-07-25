@@ -12,31 +12,42 @@
 %define	libtcl		%mklibname %{rname}tcl %{major}
 %define	devname		%mklibname %{rname} -d
 
+%bcond_with	tcl
+%bcond_with	tk
+
 Summary: 	Library interface to IPMI
 Name: 		openipmi
-Version:	2.0.18
-Release:	11
+Version:	2.0.21
+Release:	1
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
 Url: 		http://openipmi.sourceforge.net
 Source0: 	http://downloads.sourceforge.net/openipmi/%{rname}-%{version}.tar.gz
+Source1:	openipmi.sysconf
+Source2:	openipmi-helper
+Source3:	ipmi.service
+Source4:	openipmi.modalias
+
 Patch3:		OpenIPMI-2.0.16-python26.patch
 Patch4:		openipmi-2.0.16-pthreads.patch
 
 BuildRequires:	swig >= 1.3
+%if %{with tcl}
 BuildRequires:	tcl
+BuildRequires:	pkgconfig(tcl)
+%endif
+%if %{with tk}
 BuildRequires:	tk
 BuildRequires:	tkinter
+BuildRequires:	pkgconfig(tk)
+%endif
 BuildRequires:	gdbm-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	perl-devel
-BuildRequires:	wxPythonGTK
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(popt)
 BuildRequires:	pkgconfig(python)
-BuildRequires:	pkgconfig(tcl)
-BuildRequires:	pkgconfig(tk)
 Requires(pre,post):	rpm-helper
 
 %description 
@@ -150,6 +161,7 @@ Conflicts:	%{name}-lanserv < 2.0.18-5
 This package contains the library needed to run programs dynamically
 linked with %{name}.
 
+%if %{with tcl}
 %package -n %{libtcl}
 Summary:	A library for %{name}
 Group:		System/Libraries
@@ -158,6 +170,7 @@ Obsoletes:	tcl-%{name} < 2.0.18-5
 %description -n %{libtcl}
 This package contains the library needed to run programs dynamically
 linked with %{name}.
+%endif
 
 %package -n %{devname}
 Summary:	Development files for OpenIPMI
@@ -170,7 +183,9 @@ Requires:	%{libname} = %{version}-%{release}
 Requires:	%{libutils} = %{version}-%{release}
 Requires:	%{libui} = %{version}-%{release}
 Requires:	%{liblanserv} = %{version}-%{release}
+%if %{with tcl}
 Requires:	%{libtcl} = %{version}-%{release}
+%endif
 %rename		%{name}-devel < 2.0.18-5
 
 %description -n %{devname}
@@ -182,12 +197,19 @@ and/or middleware that depends on libOpenIPMI
 %apply_patches
 
 %build
+export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"
 export PYTHONDONTWRITEBYTECODE=
 %define _disable_ld_no_undefined 1
-%configure2_5x	\
+%configure	\
 	--with-perlinstall=%{perl_vendorarch} \
 	--with-pythoninstall=%{python_sitearch} \
 	--with-glib12=no \
+%if !%{with tcl}
+	--with-tcl=no \
+%endif
+%if !%{with tk}
+	--with-tkinter=no \
+%endif
 	--with-pythonusepthreads=yes \
 	--with-perlusepthreads=yes \
 	--disable-static
@@ -199,8 +221,16 @@ export PYTHONDONTWRITEBYTECODE=
 
 find %{buildroot} -type f -name "*.la" -exec rm -f {} ';'
 
-install -m755 ipmi.init -D %{buildroot}/%{_sysconfdir}/init.d/ipmi
-install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+install -m 644 %SOURCE1 %{buildroot}%{_sysconfdir}/sysconfig/ipmi
+install -d %{buildroot}%{_libexecdir}
+install -m 755 %SOURCE2 %{buildroot}%{_libexecdir}/openipmi-helper
+install -d %{buildroot}%{_unitdir}
+install -m 644 %SOURCE3 %{buildroot}%{_unitdir}/ipmi.service
+install -d %{buildroot}%{_sysconfdir}/modprobe.d
+install -m 644 %SOURCE4 %{buildroot}%{_sysconfdir}/modprobe.d/OpenIPMI.conf
+install -d %{buildroot}%{_localstatedir}/run/%{name}
+
 
 %preun
 %_preun_service ipmi
@@ -271,8 +301,10 @@ install -m644 ipmi.sysconf -D %{buildroot}/%{_sysconfdir}/sysconfig/ipmi
 %files -n %{liblanserv}
 %{_libdir}/libIPMIlanserv.so.%{major}*
 
+%if %{with tcl}
 %files -n %{libtcl}
 %{_libdir}/libOpenIPMItcl.so.%{major}*
+%endif
 
 %files -n %{devname}
 %{_includedir}/OpenIPMI

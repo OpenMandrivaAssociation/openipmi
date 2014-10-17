@@ -47,7 +47,7 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(popt)
-BuildRequires:	pkgconfig(python)
+BuildRequires:	pkgconfig(python2)
 Requires(pre,post):	rpm-helper
 
 %description 
@@ -199,10 +199,12 @@ and/or middleware that depends on libOpenIPMI
 %build
 export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"
 export PYTHONDONTWRITEBYTECODE=
+export PYTHON=%{python2}
+
 %define _disable_ld_no_undefined 1
 %configure	\
 	--with-perlinstall=%{perl_vendorarch} \
-	--with-pythoninstall=%{python_sitearch} \
+	--with-pythoninstall=%{python2_sitearch} \
 	--with-glib12=no \
 %if !%{with tcl}
 	--with-tcl=no \
@@ -277,7 +279,7 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %doc swig/OpenIPMI.i
 
 %files gui
-%{python_sitearch}/openipmigui/*
+%{python2_sitearch}/openipmigui/*
 %{_bindir}/openipmigui
 
 %files -n %{libglib}

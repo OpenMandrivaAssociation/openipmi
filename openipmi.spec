@@ -47,7 +47,6 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(popt)
-BuildRequires:	pkgconfig(python)
 BuildRequires:	pkgconfig(python2)
 Requires(pre,post):	rpm-helper
 
@@ -207,6 +206,7 @@ export CC=gcc
 %configure	\
 	--with-perlinstall=%{perl_vendorarch} \
 	--with-pythoninstall=%{python2_sitearch} \
+	--with-pythoncflags=-I%{_includedir}/python%{py2_ver} \
 	--with-glib12=no \
 %if !%{with tcl}
 	--with-tcl=no \
@@ -216,12 +216,11 @@ export CC=gcc
 %endif
 	--with-pythonusepthreads=yes \
 	--with-perlusepthreads=yes \
-	--disable-static PYTHON=%__python2
 
-%make
+%make pythonprog=%__python2
 
 %install
-%makeinstall_std PYTHON_GUI_DIR=openipmigui
+%makeinstall_std PYTHON_GUI_DIR=openipmigui pythonprog=%__python2
 
 find %{buildroot} -type f -name "*.la" -exec rm -f {} ';'
 
@@ -245,8 +244,8 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %files
 %doc FAQ README README.Force
 %doc README.MotorolaMXP
-%{_sysconfdir}/init.d/ipmi
 %config(noreplace) %{_sysconfdir}/sysconfig/ipmi
+%{_unitdir}/ipmi.service
 
 %files ui
 %{_bindir}/ipmi_ui
@@ -277,11 +276,10 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %doc swig/OpenIPMI.i swig/perl/sample swig/perl/ipmi_powerctl
 
 %files -n python-%{name}
-%{python_sitearch}/*OpenIPMI.*
+%{python2_sitearch}/*OpenIPMI.*
 %doc swig/OpenIPMI.i
 
 %files gui
-%{python2_sitearch}/openipmigui/*
 %{_bindir}/openipmigui
 
 %files -n %{libglib}

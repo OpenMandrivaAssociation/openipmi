@@ -47,6 +47,7 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(popt)
+BuildRequires:	pkgconfig(python)
 BuildRequires:	pkgconfig(python2)
 Requires(pre,post):	rpm-helper
 

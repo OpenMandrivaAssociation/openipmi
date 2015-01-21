@@ -200,6 +200,7 @@ and/or middleware that depends on libOpenIPMI
 export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"
 export PYTHONDONTWRITEBYTECODE=
 export PYTHON=%{__python2}
+export CC=gcc
 
 %define _disable_ld_no_undefined 1
 %configure	\

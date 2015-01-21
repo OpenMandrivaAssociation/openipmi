@@ -216,7 +216,7 @@ export CC=gcc
 %endif
 	--with-pythonusepthreads=yes \
 	--with-perlusepthreads=yes \
-	--disable-static
+	--disable-static PYTHON=%__python2
 
 %make
 

@@ -247,6 +247,10 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %doc FAQ README README.Force
 %doc README.MotorolaMXP
 %config(noreplace) %{_sysconfdir}/sysconfig/ipmi
+%config(noreplace) %{_sysconfdir}/ipmi/ipmisim1.emu
+%config(noreplace) %{_sysconfdir}/ipmi/lan.conf
+%config(noreplace) %{_sysconfdir}/modprobe.d/OpenIPMI.conf
+
 %{_unitdir}/ipmi.service
 
 %files ui
@@ -257,6 +261,9 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %{_bindir}/openipmish
 %{_bindir}/solterm
 %{_bindir}/rmcp_ping
+%{_bindir}/ipmi_sim
+%{_bindir}/sdrcomp
+%{_libexecdir}/openipmi-helper
 %doc %{_mandir}/man1/ipmi_ui.1*
 %doc %{_mandir}/man1/openipmicmd.1*
 %doc %{_mandir}/man1/openipmish.1*
@@ -265,6 +272,9 @@ install -d %{buildroot}%{_localstatedir}/run/%{name}
 %doc %{_mandir}/man1/rmcp_ping.1*
 %doc %{_mandir}/man7/ipmi_cmdlang.7*
 %doc %{_mandir}/man7/openipmi_conparms.7*
+%doc %{_mandir}/man1/ipmi_sim.1.xz
+%doc %{_mandir}/man5/ipmi_lan.5.xz
+%doc %{_mandir}/man5/ipmi_sim_cmd.5.xz
 
 %files lanserv
 %{_bindir}/ipmilan

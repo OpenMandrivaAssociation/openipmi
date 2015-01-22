@@ -198,7 +198,7 @@ and/or middleware that depends on libOpenIPMI
 
 %build
 export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"
-export PYTHONDONTWRITEBYTECODE=
+unset PYTHONDONTWRITEBYTECODE
 export PYTHON=%{__python2}
 export CC=gcc
 

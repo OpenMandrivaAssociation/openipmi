@@ -221,6 +221,7 @@ sed -i 's/import OpenIPMI.py/import OpenIPMI/' swig/python/Makefile
 %make pythonprog=%__python2
 
 %install
+unset PYTHONDONTWRITEBYTECODE
 make install DESTDIR=%{buildroot} PYTHON_GUI_DIR=openipmigui pythonprog=%__python2
 
 find %{buildroot} -type f -name "*.la" -exec rm -f {} ';'

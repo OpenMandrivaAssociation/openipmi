@@ -198,9 +198,14 @@ and/or middleware that depends on libOpenIPMI
 
 %build
 export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"
+
 unset PYTHONDONTWRITEBYTECODE
 export PYTHON=%{__python2}
-export CC=gcc
+export CC="gcc -fuse-ld=bfd"
+export CXX="g++ -fuse-ld=bfd"
+mkdir -p bfd
+ln -s %{_bindir}/ld.bfd bfd/ld
+export PATH=$PWD/bfd:$PATH
 
 %define _disable_ld_no_undefined 1
 %configure	\

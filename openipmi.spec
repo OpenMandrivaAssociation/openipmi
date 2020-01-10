@@ -194,7 +194,7 @@ and/or middleware that depends on libOpenIPMI
 
 %prep
 %setup -qn %{rname}-%{version}
-%apply_patches
+%autopatch -p1
 
 %build
 export CFLAGS="`echo %{optflags} | sed 's/-Wp,-D_FORTIFY_SOURCE=2//'`"

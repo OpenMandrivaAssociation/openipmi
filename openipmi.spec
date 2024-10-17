@@ -21,7 +21,7 @@ Version:	2.0.21
 Release:	6
 License: 	LGPLv2+
 Group: 		System/Kernel and hardware
-Url: 		http://openipmi.sourceforge.net
+Url: 		https://openipmi.sourceforge.net
 Source0: 	http://downloads.sourceforge.net/openipmi/%{rname}-%{version}.tar.gz
 Source1:	openipmi.sysconf
 Source2:	openipmi-helper

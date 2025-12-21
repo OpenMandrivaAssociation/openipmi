@@ -31,6 +31,11 @@ Source4:	openipmi.modalias
 Patch3:		OpenIPMI-2.0.16-python26.patch
 Patch4:		openipmi-2.0.16-pthreads.patch
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	swig >= 1.3
 %if %{with tcl}
 BuildRequires:	tcl
